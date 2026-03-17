@@ -64,7 +64,7 @@ class Trasher extends Dog {
         super();
         this.name = "Громила";
         this.maxPower = 5;
-        this.currentPowerPower = 5;
+        this.currentPower = 5;
     }
 
     modifyTakenDamage(value, fromCard, gameContext, continuation) {
@@ -86,22 +86,22 @@ class Gatling extends Creature {
         super();
         this.name = "Гатлинг";
         this.maxPower = 6;
-        this.currentPowerPower = 6;
+        this.currentPower = 6;
     }
 
-    attack (gameContext, continuation){
+    attack(gameContext, continuation) {
         const taskQueue = new TaskQueue();
         const { oppositePlayer } = gameContext;
-        taskQueue.push (onDone => this.view.showAttack(onDone));
+        taskQueue.push((onDone) => this.view.showAttack(onDone));
         for (const card of oppositePlayer.table) {
-            taskQueue.push (onDone => {
+            taskQueue.push((onDone) => {
                 if (!card) {
-                    onDone ();
+                    onDone();
                     return;
                 }
 
                 this.dealDamageToCreature(2, card, gameContext, onDone);
-            })
+            });
         }
 
         taskQueue.continueWith(continuation);
@@ -109,99 +109,63 @@ class Gatling extends Creature {
 }
 
 class Lad extends Dog {
-    constructor () {
+    static inGameCount = 0;
+
+    constructor() {
+        super();
         this.name = "Браток";
         this.maxPower = 2;
-        this.currentPowerPower = 2;
+        this.currentPower = 2;
     }
 
-    static getInGameCount (){
-        return this.getInGameCount || 0;
+    static getInGameCount() {
+        return Lad.inGameCount;
     }
 
-    static setInGameCount (value){
-        this.inGameCount = value;
+    static setInGameCount(value) {
+        Lad.inGameCount = value;
     }
 
-    static getBonus () {
-        const count = this.getInGameCount();
-        return count * (count + 1)/2;
+    static getBonus() {
+        const count = Lad.inGameCount;
+        return (count * (count + 1)) / 2;
     }
 
     doAfterComingIntoPlay(gameContext, continuation) {
-
-    const ctor = this.constructor;
-
-    ctor.setInGameCount(ctor.getInGameCount() + 1);
-
-    continuation();
-
-}
-
-
-
-doBeforeRemoving(continuation) {
-
-    const ctor = this.constructor;
-
-    ctor.setInGameCount(Math.max(ctor.getInGameCount() - 1, 0));
-
-    continuation();
-
-}
-
-
-
-modifyDealedDamageToCreature(value, toCard, gameContext, continuation) {
-
-    continuation(value + this.constructor.getBonus());
-
-}
-
-
-
-modifyTakenDamage(value, fromCard, gameContext, continuation) {
-
-    continuation(value - this.constructor.getBonus());
-
-}
-
-
-
-getDescriptions() {
-
-    const descriptions = super.getDescriptions();
-
-    if (
-
-        Lad.prototype.hasOwnProperty('modifyDealedDamageToCreature')
-
-        ||
-        Lad.prototype.hasOwnProperty('modifyTakenDamage')
-
-    ) {
-
-        descriptions.unshift('Чем их больше, тем они сильнее');
-
+        Lad.inGameCount += 1;
+        continuation();
     }
 
-    return descriptions;
+    doBeforeRemoving(continuation) {
+        Lad.inGameCount -= 1;
+        continuation();
+    }
 
-}
+    modifyDealedDamageToCreature(value, toCard, gameContext, continuation) {
+        continuation(value + this.constructor.getBonus());
+    }
+
+    modifyTakenDamage(value, fromCard, gameContext, continuation) {
+        continuation(value - this.constructor.getBonus());
+    }
+
+    getDescriptions() {
+        const descriptions = super.getDescriptions();
+
+        if (
+            Lad.prototype.hasOwnProperty("modifyDealedDamageToCreature") ||
+            Lad.prototype.hasOwnProperty("modifyTakenDamage")
+        ) {
+            descriptions.unshift("Чем их больше, тем они сильнее");
+        }
+
+        return descriptions;
+    }
 }
 
 // Колода Шерифа, нижнего игрока.
-const seriffStartDeck = [
-    new Duck(),
-    new Duck(),
-    new Duck(),
-    new Gatling(),
-];
-const banditStartDeck = [
-    new Trasher(),
-    new Dog(),
-    new Dog(),
-];
+const seriffStartDeck = [new Duck(), new Duck(), new Duck()];
+const banditStartDeck = [new Lad(), new Lad()];
 
 // Создание игры.
 const game = new Game(seriffStartDeck, banditStartDeck);
