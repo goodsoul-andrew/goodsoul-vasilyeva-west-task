@@ -1,6 +1,5 @@
 import Card from "./Card.js";
 import Game from "./Game.js";
-import TaskQueue from "./TaskQueue.js";
 import SpeedRate from "./SpeedRate.js";
 import TaskQueue from "./TaskQueue.js";
 
@@ -123,10 +122,17 @@ class Lad extends Dog {
     }
 }
 // Колода Шерифа, нижнего игрока.
-const seriffStartDeck = [new Duck(), new Duck(), new Duck()];
-
-// Колода Бандита, верхнего игрока.
-const banditStartDeck = [new Trasher()];
+const seriffStartDeck = [
+    new Duck(),
+    new Duck(),
+    new Duck(),
+    new Gatling(),
+];
+const banditStartDeck = [
+    new Trasher(),
+    new Dog(),
+    new Dog(),
+];
 
 // Создание игры.
 const game = new Game(seriffStartDeck, banditStartDeck);
