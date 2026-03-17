@@ -2,6 +2,7 @@ import Card from "./Card.js";
 import Game from "./Game.js";
 import TaskQueue from "./TaskQueue.js";
 import SpeedRate from "./SpeedRate.js";
+import TaskQueue from "./TaskQueue.js";
 
 // Отвечает является ли карта уткой.
 function isDuck(card) {
@@ -91,6 +92,24 @@ class Gatling extends Creature {
         this.name = "Гатлинг";
         this.maxPower = 6;
         this.currentPowerPower = 6;
+    }
+
+    attack (gameContext, continuation){
+        const taskQueue = new TaskQueue();
+        const { oppositeCard } = gameContext;
+        taskQueue.push (onDone => this.view.showAttack(onDone));
+        for (const card of oppositeCard.table) {
+            taskQueue.push (onDone => {
+                if (!card) {
+                    onDone ();
+                    return;
+                }
+
+                this.dealDamageToCreature(2, card, gameContext, onDone);
+            })
+        }
+
+        taskQueue.continueWith(continuation);
     }
 }
 // Колода Шерифа, нижнего игрока.
