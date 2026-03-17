@@ -84,8 +84,12 @@ class Trasher extends Dog {
 
 class Gatling extends Creature {
     constructor() {
-        super ('Гатлинг', 6);
+        super();
+        this.name = "Гатлинг";
+        this.maxPower = 6;
+        this.currentPowerPower = 6;
     }
+
     attack (gameContext, continuation){
         const taskQueue = new TaskQueue();
         const { oppositePlayer } = gameContext;
@@ -118,10 +122,75 @@ class Lad extends Dog {
 
     static setInGameCount (value){
         this.inGameCount = value;
+    }
 
+    static getBonus () {
+        const count = this.getInGameCount();
+        return count * (count + 1)/2;
+    }
+
+    doAfterComingIntoPlay(gameContext, continuation) {
+
+    const ctor = this.constructor;
+
+    ctor.setInGameCount(ctor.getInGameCount() + 1);
+
+    continuation();
+
+}
+
+
+
+doBeforeRemoving(continuation) {
+
+    const ctor = this.constructor;
+
+    ctor.setInGameCount(Math.max(ctor.getInGameCount() - 1, 0));
+
+    continuation();
+
+}
+
+
+
+modifyDealedDamageToCreature(value, toCard, gameContext, continuation) {
+
+    continuation(value + this.constructor.getBonus());
+
+}
+
+
+
+modifyTakenDamage(value, fromCard, gameContext, continuation) {
+
+    continuation(value - this.constructor.getBonus());
+
+}
+
+
+
+getDescriptions() {
+
+    const descriptions = super.getDescriptions();
+
+    if (
+
+        Lad.prototype.hasOwnProperty('modifyDealedDamageToCreature')
+
+        ||
+        Lad.prototype.hasOwnProperty('modifyTakenDamage')
+
+    ) {
+
+        descriptions.unshift('Чем их больше, тем они сильнее');
 
     }
+
+    return descriptions;
+
 }
+}
+
 // Колода Шерифа, нижнего игрока.
 const seriffStartDeck = [new Duck(), new Duck(), new Duck()];
 
