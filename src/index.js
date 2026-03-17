@@ -28,19 +28,14 @@ function getCreatureDescription(card) {
 }
 
 class Creature extends Card {
-    constructor (name, damage) {
+    constructor(name, damage) {
         super(name, damage);
     }
 
-    getDescriptions () {
-        return [
-            getCreatureDescription(this),
-            super.getDescriptions()
-        ];
+    getDescriptions() {
+        return [getCreatureDescription(this), super.getDescriptions()];
     }
 }
-
-
 
 // Основа для утки.
 class Duck extends Creature {
@@ -65,43 +60,39 @@ class Dog extends Creature {
 }
 
 class Trasher extends Dog {
-    constructor () {
-        super(); 
+    constructor() {
+        super();
         this.name = "Громила";
         this.maxPower = 5;
         this.currentPowerPower = 5;
     }
 
-    modifyTakenDamage (value, fromCard, gameContext, continuation) {
+    modifyTakenDamage(value, fromCard, gameContext, continuation) {
         if (value > 0) {
-           this.view.signalAbility (() => continuation(value -1))
-        return; 
+            this.view.signalAbility(() => continuation(value - 1));
+            return;
         }
-        
-        continuation (value);
+
+        continuation(value);
     }
 
     getDescriptions() {
-        return ['Получает урона на 1 меньше', ...super.getDescriptions()];
+        return ["Получает урона на 1 меньше", ...super.getDescriptions()];
     }
 }
 
 class Gatling extends Creature {
-    constructor () {
+    constructor() {
         this.name = "Гатлинг";
         this.maxPower = 6;
         this.currentPowerPower = 6;
     }
 }
 // Колода Шерифа, нижнего игрока.
-const seriffStartDeck = [
-    new Duck(),
-    new Duck(),
-    new Duck(),
-];
+const seriffStartDeck = [new Duck(), new Duck(), new Duck()];
 
 // Колода Бандита, верхнего игрока.
-const banditStartDeck = [new Dog()];
+const banditStartDeck = [new Trasher()];
 
 // Создание игры.
 const game = new Game(seriffStartDeck, banditStartDeck);
