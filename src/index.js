@@ -88,17 +88,14 @@ class Trasher extends Dog {
 }
 
 class Gatling extends Creature {
-    constructor () {
-        this.name = "Гатлинг";
-        this.maxPower = 6;
-        this.currentPowerPower = 6;
+    constructor() {
+        super ('Гатлинг', 6);
     }
-
     attack (gameContext, continuation){
         const taskQueue = new TaskQueue();
-        const { oppositeCard } = gameContext;
+        const { oppositePlayer } = gameContext;
         taskQueue.push (onDone => this.view.showAttack(onDone));
-        for (const card of oppositeCard.table) {
+        for (const card of oppositePlayer.table) {
             taskQueue.push (onDone => {
                 if (!card) {
                     onDone ();
@@ -110,6 +107,24 @@ class Gatling extends Creature {
         }
 
         taskQueue.continueWith(continuation);
+    }
+}
+
+class Lad extends Dog {
+    constructor () {
+        this.name = "Браток";
+        this.maxPower = 2;
+        this.currentPowerPower = 2;
+    }
+
+    static getInGameCount (){
+        return this.getInGameCount || 0;
+    }
+
+    static setInGameCount (value){
+        this.inGameCount = value;
+
+
     }
 }
 // Колода Шерифа, нижнего игрока.
