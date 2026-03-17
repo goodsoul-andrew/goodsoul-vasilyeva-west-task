@@ -40,6 +40,8 @@ class Creature extends Card {
     }
 }
 
+
+
 // Основа для утки.
 class Duck extends Creature {
     constructor() {
@@ -62,6 +64,35 @@ class Dog extends Creature {
     }
 }
 
+class Trasher extends Dog {
+    constructor () {
+        super(); 
+        this.name = "Громила";
+        this.maxPower = 5;
+        this.currentPowerPower = 5;
+    }
+
+    modifyTakenDamage (value, fromCard, gameContext, continuation) {
+        if (value > 0) {
+           this.view.signalAbility (() => continuation(value -1))
+        return; 
+        }
+        
+        continuation (value);
+    }
+
+    getDescriptions() {
+        return ['Получает урона на 1 меньше', ...super.getDescriptions()];
+    }
+}
+
+class Gatling extends Creature {
+    constructor () {
+        this.name = "Гатлинг";
+        this.maxPower = 6;
+        this.currentPowerPower = 6;
+    }
+}
 // Колода Шерифа, нижнего игрока.
 const seriffStartDeck = [
     new Duck(),
